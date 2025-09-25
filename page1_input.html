@@ -1,13 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 1 — Input Options</h2>
-<form action="{{ url_for('generate') }}" method="post">
-  <label>Number of Questions:</label>
-  <select name="num_questions">
-    <option value="1">1</option>
-    <option value="5" selected>5</option>
-    <option value="10">10</option>
-  </select>
-  <button type="submit">Generate Quiz</button>
-</form>
+<section class="card">
+  <h2>Create a Quiz</h2>
+  <p>
+    Provide study material either by typing or pasting text directly, or by uploading a
+    PDF / PPTX file. The application will analyse the content and create a multiple-choice quiz
+    without storing anything in a database.
+  </p>
+  <form action="{{ url_for('generate') }}" method="post" enctype="multipart/form-data">
+    <label for="input_text">Paste or type learning material</label>
+    <textarea id="input_text" name="input_text" placeholder="Paste text here...">{{ request.form.get('input_text', '') }}</textarea>
+
+    <label for="source_file">Or upload a PDF / PPTX file</label>
+    <input id="source_file" type="file" name="source_file" accept=".pdf,.pptx">
+
+    <label for="num_questions">How many questions?</label>
+    <select id="num_questions" name="num_questions">
+      <option value="1">1 question</option>
+      <option value="5" selected>5 questions</option>
+      <option value="10">10 questions</option>
+    </select>
+
+    <button class="button" type="submit">Generate Quiz</button>
+  </form>
+</section>
+
+<section class="card">
+  <h3>How it works</h3>
+  <ol>
+    <li>Paste text or upload a supported document.</li>
+    <li>Select how many questions to create.</li>
+    <li>The quiz is generated instantly – no data is stored.</li>
+  </ol>
+</section>
 {% endblock %}

@@ -1,16 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 2 — Take Quiz</h2>
+<section class="card">
+  <h2>Quiz Preview</h2>
+  <p class="badge">{{ num_questions }} questions</p>
+  <p>Select the answer that best completes each sentence.</p>
+</section>
+
 <form action="{{ url_for('submit') }}" method="post">
-  {% for q in quiz.questions %}
-    <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
-    {% for choice in q.choices %}
-      <label>
-        <input type="radio" name="q_{{ loop.parent.index0 }}" value="{{ loop.index0 }}" required>
-        {{ choice }}
-      </label><br>
+  <section class="card">
+    {% for q in quiz.questions %}
+      <div class="question">
+        <h3>Question {{ loop.index }}</h3>
+        <p>{{ q.question | replace('\n', '<br>') | safe }}</p>
+        <ul class="choices">
+          {% for choice in q.choices %}
+            <li>
+              <label>
+                <input type="radio" name="q_{{ loop.parent.index0 }}" value="{{ loop.index0 }}" required>
+                {{ choice }}
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     {% endfor %}
-  {% endfor %}
-  <button type="submit">Submit</button>
+    <button class="button" type="submit">Submit Answers</button>
+  </section>
 </form>
 {% endblock %}

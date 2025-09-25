@@ -2,12 +2,163 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>AI Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz System</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fb;
+      color: #222;
+    }
+
+    header {
+      background: #3f51b5;
+      color: #fff;
+      padding: 1.5rem 2rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.75rem;
+    }
+
+    header nav a {
+      color: #fff;
+      margin-right: 1rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px rgba(63, 81, 181, 0.12);
+      margin-bottom: 2rem;
+    }
+
+    .button {
+      background: #3f51b5;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .button:hover {
+      box-shadow: 0 8px 18px rgba(63, 81, 181, 0.3);
+      transform: translateY(-1px);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    textarea, select, input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #c5cae9;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+    }
+
+    .flash {
+      border-left: 4px solid #f44336;
+      background: #ffebee;
+      color: #b71c1c;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .question {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e8eaf6;
+    }
+
+    .question h3 {
+      margin-top: 0;
+      color: #303f9f;
+    }
+
+    ul.choices {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul.choices li {
+      margin-bottom: 0.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: #c5cae9;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .correct {
+      color: #1b5e20;
+      font-weight: bold;
+    }
+
+    .incorrect {
+      color: #b71c1c;
+      font-weight: bold;
+    }
+
+    .score {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+      color: #1a237e;
+    }
+  </style>
 </head>
 <body>
-  <h1>AI Quiz System</h1>
-  <a href="/">Page 1: Create Quiz</a>
-  <hr>
-  {% block content %}{% endblock %}
+  <header>
+    <h1>Quiz System</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Page 1: Create Quiz</a>
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>
