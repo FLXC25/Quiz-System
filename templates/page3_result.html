@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Page 3 — Quiz Results</h2>
+<div class="result-summary">
+  <p><strong>Score:</strong> {{ score }}% ({{ correct }} out of {{ total }} correct)</p>
+</div>
+{% for q in quiz.questions %}
+  <section class="question">
+    <h3>Question {{ loop.index }}</h3>
+    <p>{{ q.question }}</p>
+    <ul class="answer-list">
+      {% for choice in q.choices %}
+        {% set is_correct = loop.index0 == q.answer_index %}
+        {% set is_selected = loop.index0 == user_answers[loop.parent.index0] %}
+        <li class="{% if is_correct %}answer-correct{% elif is_selected %}answer-incorrect{% endif %}">
+          {{ choice }}
+          {% if is_correct %}<strong> — Correct Answer</strong>{% endif %}
+          {% if is_selected and not is_correct %}<em> — Your Choice</em>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endfor %}
+<a href="{{ url_for('index') }}">Create another quiz</a>
+{% endblock %}

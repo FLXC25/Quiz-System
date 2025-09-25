@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Page 1 — Provide Text, PDF, or PPT</h2>
+<p>
+  Paste study notes directly or upload a <strong>PDF</strong>/<strong>PPT/PPTX</strong> file.
+  Choose how many multiple-choice questions you would like the assistant to generate.
+</p>
+<form action="{{ url_for('generate') }}" method="post" enctype="multipart/form-data">
+  <div>
+    <label for="source_text">Enter text</label>
+    <textarea id="source_text" name="source_text" placeholder="Paste study notes or lecture content here...">{{ request.form.source_text or '' }}</textarea>
+  </div>
+  <div>
+    <label for="source_file">Or upload a document</label>
+    <input type="file" id="source_file" name="source_file" accept=".pdf,.ppt,.pptx">
+    <small>Files are read temporarily and never stored on a server or database.</small>
+  </div>
+  <div>
+    <label for="num_questions">Number of questions to generate</label>
+    <select id="num_questions" name="num_questions">
+      <option value="1" {% if request.form.num_questions == '1' %}selected{% endif %}>1 Question</option>
+      <option value="5" {% if request.form.num_questions == '5' or not request.form.num_questions %}selected{% endif %}>5 Questions</option>
+      <option value="10" {% if request.form.num_questions == '10' %}selected{% endif %}>10 Questions</option>
+    </select>
+  </div>
+  <button type="submit">Generate Quiz</button>
+</form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Page 2 — Multiple-Choice Quiz</h2>
+<p>Answer each question below. When you submit, the system will reveal your score.</p>
+<form action="{{ url_for('submit') }}" method="post">
+  {% for q in quiz.questions %}
+    <section class="question">
+      <h3>Question {{ loop.index }}</h3>
+      <p>{{ q.question }}</p>
+      <div class="choices">
+        {% for choice in q.choices %}
+          <label>
+            <input type="radio" name="q_{{ loop.parent.index0 }}" value="{{ loop.index0 }}" required>
+            {{ choice }}
+          </label>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+  <button type="submit">Submit Answers</button>
+</form>
+{% endblock %}

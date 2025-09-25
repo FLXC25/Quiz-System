@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Quiz Builder</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fb;
+      color: #222;
+    }
+    header {
+      background: #4b6cb7;
+      background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+      color: #fff;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    header h1 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.75rem;
+    }
+    header nav a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      margin-right: 1rem;
+      font-weight: 500;
+    }
+    header nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 960px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 12px 25px rgba(22, 28, 45, 0.08);
+    }
+    h2 {
+      margin-top: 0;
+      color: #182848;
+    }
+    form {
+      display: grid;
+      gap: 1.5rem;
+    }
+    label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      padding: 0.75rem;
+      border: 1px solid #cfd8dc;
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    input[type="file"], select {
+      padding: 0.65rem;
+      border: 1px solid #cfd8dc;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #fafafa;
+    }
+    button {
+      justify-self: start;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: #4b6cb7;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 6px 16px rgba(75, 108, 183, 0.4);
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(75, 108, 183, 0.45);
+    }
+    .messages {
+      padding: 1rem;
+      border-radius: 8px;
+      background: #ffebee;
+      color: #c62828;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ffcdd2;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eceff1;
+    }
+    .choices label {
+      display: block;
+      margin: 0.35rem 0;
+      background: #f1f5ff;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .choices input[type="radio"] {
+      margin-right: 0.5rem;
+    }
+    .choices label:hover {
+      border-color: #4b6cb7;
+      background: #e8f0fe;
+    }
+    .result-summary {
+      padding: 1rem;
+      background: #f1f8e9;
+      border-radius: 8px;
+      border: 1px solid #c5e1a5;
+      margin-bottom: 2rem;
+    }
+    .answer-list li {
+      margin: 0.4rem 0;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      list-style: none;
+    }
+    .answer-correct {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+    .answer-incorrect {
+      background: #ffebee;
+      color: #c62828;
+    }
+    footer {
+      text-align: center;
+      margin: 2rem 0 1rem 0;
+      color: #78909c;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Quiz Builder</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Page 1: Provide Study Material</a>
+      {% if session.get('quiz') %}
+        <a href="{{ url_for('show_quiz') }}">Page 2: Take Quiz</a>
+        <a href="{{ url_for('show_results') }}">Page 3: Results</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <p>No database required. Your quiz lives only for this browser session.</p>
+  </footer>
+</body>
+</html>
