@@ -1,8 +1,8 @@
+<!-- templates/page1_input.html -->
 {% extends 'base.html' %}
 {% block content %}
 <h2>Page 1 — Input Options</h2>
 <form action="{{ url_for('generate') }}" method="post">
-  <label>Number of Questions:</label>
   <select name="num_questions">
     <option value="1">1</option>
     <option value="5" selected>5</option>
