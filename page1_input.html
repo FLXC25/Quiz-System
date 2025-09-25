@@ -1,13 +1,20 @@
-<!-- templates/page1_input.html -->
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 1 — Input Options</h2>
+<h2>Page 1 — Paste Text for Quiz</h2>
+
 <form action="{{ url_for('generate') }}" method="post">
-  <select name="num_questions">
-    <option value="1">1</option>
-    <option value="5" selected>5</option>
-    <option value="10">10</option>
-  </select>
+  <label>Material (text):</label><br>
+  <textarea name="input_text" rows="10" style="width:100%;" placeholder="Paste your notes or content here..."></textarea>
+
+  <p style="margin-top:10px;">
+    <label>Number of Questions:</label>
+    <select name="num_questions">
+      <option value="1">1</option>
+      <option value="5" selected>5</option>
+      <option value="10">10</option>
+    </select>
+  </p>
+
   <button type="submit">Generate Quiz</button>
 </form>
 {% endblock %}
