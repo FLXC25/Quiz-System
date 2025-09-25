@@ -1,20 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 3 — Result</h2>
-<p>Your score: {{ score }} ({{ correct }}/{{ total }})</p>
+<section class="card">
+  <h2>Results</h2>
+  <p class="score">Score: {{ score }}%</p>
+  <p>You answered {{ correct }} out of {{ total }} questions correctly.</p>
+  <a class="button" href="{{ url_for('index') }}">Create another quiz</a>
+</section>
 
-{% for q in quiz.questions %}
-  <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
-  <ul>
-    {% for choice in q.choices %}
-      <li
-        {% if loop.index0 == q.answer_index %}style="color:green"{% endif %}
-        {% if loop.index0 == user_answers[loop.parent.index0] and loop.index0 != q.answer_index %}style="color:red"{% endif %}
-      >
-        {{ choice }}
-      </li>
-    {% endfor %}
-  </ul>
-{% endfor %}
-<a href="/">Back</a>
+<section class="card">
+  <h3>Review</h3>
+  {% for q in quiz.questions %}
+    <div class="question">
+      <h3>Question {{ loop.index }}</h3>
+      <p>{{ q.question | replace('\n', '<br>') | safe }}</p>
+      <ul class="choices">
+        {% for choice in q.choices %}
+          {% set is_correct = loop.index0 == q.answer_index %}
+          {% set is_selected = loop.index0 == user_answers[loop.parent.index0] %}
+          <li class="{% if is_correct %}correct{% elif is_selected %}incorrect{% endif %}">
+            {{ choice }}
+            {% if is_correct %}
+              <span class="badge">Correct answer</span>
+            {% elif is_selected %}
+              <span class="badge">Your choice</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      <p><strong>Original sentence:</strong> {{ q.original_sentence }}</p>
+    </div>
+  {% endfor %}
+</section>
 {% endblock %}
