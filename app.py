@@ -5,19 +5,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-print("Loaded key:", OPENAI_API_KEY)  # For debugging only, don’t keep in prod
+print("Loaded key:", OPENAI_API_KEY)  # Debug only
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import os, json, re 
+import json, re
 
 # Try to import OpenAI client
-import os
-
 try:
     from openai import OpenAI
-    print(os.getenv("OPENAI_API_KEY"))
-
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     HAS_OPENAI = True
     print("[LOG] OpenAI client initialized successfully.")
@@ -36,69 +31,56 @@ def _to_json(raw: str) -> dict:
         return json.loads(raw)
     except Exception:
         pass
-
-    # extract {...} block if model added extra text
     m = re.search(r"\{[\s\S]*\}", raw)
     if m:
         try:
             return json.loads(m.group(0))
         except Exception:
             pass
-
-    # last fallback → replace quotes
     try:
         return json.loads(raw.replace("'", '"'))
     except Exception:
         return {}
 
-# Global switch: turn logging on/off
-TEST_LOG = True   # set to False to disable logs
-
+TEST_LOG = True
 def log(msg: str):
-    """Print logs only if TEST_LOG is enabled."""
     if TEST_LOG:
         print(f"[LOG] {msg}")
 
 def generate_mcqs(source_text: str, num_q: int) -> dict:
     """Generate MCQs with OpenAI or fall back to dummy data."""
-    num_q = max(1, min(int(num_q), 10))  # ensure 1–10
+    num_q = max(1, min(int(num_q), 10))  # enforce 1–10
     log(f"Requested {num_q} questions.")
-    log(f"Requested {HAS_OPENAI} questions.")
+
     if HAS_OPENAI and os.getenv("OPENAI_API_KEY"):
         prompt = f"""
-You are a quiz generator. Based on the MATERIAL, produce {num_q} multiple-choice questions.
+You are a quiz generator. Based on the MATERIAL, produce exactly {num_q} multiple-choice question(s).
 Return STRICT JSON with this schema:
 {{
   "questions": [
-    {{"question":"...","choices":["A","B","C","D"],"answer_index":0}},
-    ...
+    {{"question":"...","choices":["A","B","C","D"],"answer_index":0}}
   ]
 }}
 Rules:
 - Exactly 4 choices per question.
 - answer_index must be 0..3.
-- Keep questions clear and self-contained.
+- Generate exactly {num_q} question(s).
 
 MATERIAL:
 {source_text[:8000]}
 """
-        log("Prompt prepared, calling OpenAI API...")
-
         try:
             resp = client.chat.completions.create(
-    model=os.getenv("OPENAI_MODEL", "gpt-5"),
-    messages=[
-        {"role": "system", "content": "Return ONLY strict JSON."},
-        {"role": "user", "content": prompt},
-    ],
-    response_format={"type": "json_object"}
-)
+                model=os.getenv("OPENAI_MODEL", "gpt-5"),
+                messages=[
+                    {"role": "system", "content": "Return ONLY strict JSON."},
+                    {"role": "user", "content": prompt},
+                ],
+                response_format={"type": "json_object"}
+            )
             raw = resp.choices[0].message.content
-            log("Response received from OpenAI API.")
-            log(f"Raw output: {raw[:300]}...")  # show first 300 chars
-
+            log(f"Raw output: {raw[:300]}...")
             data = _to_json(raw)
-            log("JSON parsing complete.")
 
             cleaned = []
             for i, q in enumerate((data.get("questions") or [])[:num_q], start=1):
@@ -116,26 +98,33 @@ MATERIAL:
                     "choices": [str(c) for c in choices],
                     "answer_index": max(0, min(ai, 3)),
                 })
-                log(f"Processed question #{i}: {question}")
+
+            # enforce exactly num_q
+            while len(cleaned) < num_q:
+                cleaned.append({
+                    "question": f"Dummy Question {len(cleaned)+1}?",
+                    "choices": ["Option A", "Option B", "Option C", "Option D"],
+                    "answer_index": 0
+                })
 
             if cleaned:
-                log(f"Successfully generated {len(cleaned)} questions.")
+                log(f"Returning {len(cleaned)} questions.")
                 return {"questions": cleaned}
         except Exception as e:
             log(f"OpenAI error: {e}")
 
-    # ---------------- fallback (offline or error) ---------------- #
+    # fallback dummy
     log("Falling back to dummy questions.")
-    qs = []
-    for i in range(1, num_q + 1):
-        qs.append({
-            "question": f"Sample Question {i}?",
-            "choices": ["Option A", "Option B", "Option C", "Option D"],
-            "answer_index": 0,
-        })
-    log(f"Generated {len(qs)} fallback questions.")
-    return {"questions": qs}
-
+    return {
+        "questions": [
+            {
+                "question": f"Sample Question {i}?",
+                "choices": ["Option A", "Option B", "Option C", "Option D"],
+                "answer_index": 0,
+            }
+            for i in range(1, num_q + 1)
+        ]
+    }
 
 # ---------------- Routes ---------------- #
 @app.route("/")
@@ -145,7 +134,7 @@ def index():
 @app.route("/generate", methods=["POST"])
 def generate():
     num = request.form.get("num_questions", "5")
-    text = (request.form.get("input_text") or "").strip()
+    text = (request.form.get("material") or "").strip()  # FIXED: use "material"
 
     if not text:
         flash("⚠️ Please paste some text first.", "error")

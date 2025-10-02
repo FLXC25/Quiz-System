@@ -1,20 +1,116 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 3 — Result</h2>
-<p>Your score: {{ score }} ({{ correct }}/{{ total }})</p>
+<div class="text-center">
+  <h2 class="text-primary mb-4">Result</h2>
 
-{% for q in quiz.questions %}
-  <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
-  <ul>
-    {% for choice in q.choices %}
-      <li
-        {% if loop.index0 == q.answer_index %}style="color:green"{% endif %}
-        {% if loop.index0 == user_answers[loop.parent.index0] and loop.index0 != q.answer_index %}style="color:red"{% endif %}
-      >
-        {{ choice }}
-      </li>
+  <!-- Score Box -->
+  <div class="score-box mx-auto mb-4 p-4 rounded shadow-lg
+              {% if score >= 80 %} high-score 
+              {% elif score >= 50 %} mid-score 
+              {% else %} low-score {% endif %}">
+    <p class="fs-4 mb-2">Your Score</p>
+    <h1 class="fw-bold display-5">
+      {{ score }} / 100
+    </h1>
+    <small class="text-light">({{ correct }} out of {{ total }} correct)</small>
+  </div>
+
+  <div class="result-container text-start mx-auto">
+    {% for q in quiz.questions %}
+      {% set q_index = loop.index0 %}
+      <div class="mb-4 p-3 rounded shadow-sm bg-white d-flex align-items-start">
+        
+        <!-- Number Circle -->
+        <div class="question-number me-3">
+          {{ loop.index }}
+        </div>
+
+        <!-- Question + Answers -->
+        <div class="flex-grow-1">
+          <p class="fw-bold">{{ q.question }}</p>
+          <ul class="list-unstyled">
+            {% for choice in q.choices %}
+              {% set choice_letter = "ABCD"[loop.index0] %}
+              <li class="p-2 rounded
+                  {% if loop.index0 == q.answer_index %} bg-success text-white {% endif %}
+                  {% if loop.index0 == user_answers[q_index] and loop.index0 != q.answer_index %} bg-danger text-white {% endif %}
+                  {% if loop.index0 != q.answer_index and loop.index0 != user_answers[q_index] %} text-muted {% endif %}
+                ">
+                {% if loop.index0 == q.answer_index %}
+                  ✔ {{ choice_letter }}. {{ choice }}
+                {% elif loop.index0 == user_answers[q_index] and loop.index0 != q.answer_index %}
+                  ✘ {{ choice_letter }}. {{ choice }}
+                {% else %}
+                  {{ choice_letter }}. {{ choice }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     {% endfor %}
-  </ul>
-{% endfor %}
-<a href="/">Back</a>
+  </div>
+
+  <a href="/" class="btn btn-primary btn-lg mt-4">Back to Home</a>
+</div>
+
+<style>
+  .result-container {
+    max-width: 800px;
+  }
+
+  /* Score box base */
+  .score-box {
+    max-width: 320px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+
+  /* High / Mid / Low score colors */
+  .high-score {
+    background: linear-gradient(135deg, #28a745, #20c997); /* green */
+  }
+  .mid-score {
+    background: linear-gradient(135deg, #ffc107, #fd7e14); /* orange */
+  }
+  .low-score {
+    background: linear-gradient(135deg, #dc3545, #b02a37); /* red */
+  }
+
+  .score-box h1 {
+    margin: 0;
+    font-size: 2.5rem;
+  }
+
+  .score-box p {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Number circle style */
+  .question-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #007bff;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Correct / Wrong / Neutral */
+  .bg-success {
+    background-color: #28a745 !important;
+  }
+  .bg-danger {
+    background-color: #dc3545 !important;
+  }
+  .text-muted {
+    color: #6c757d !important;
+  }
+</style>
 {% endblock %}

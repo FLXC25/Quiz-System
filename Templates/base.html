@@ -1,13 +1,98 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>AI Quiz</title>
+  <meta charset="UTF-8">
+  <title>AI Quiz System</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    /* Background image */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("/static/images/tzu_chi_bg.jpeg") no-repeat center center;
+      background-size: cover;
+      z-index: -2; /* stays behind everything */
+    }
+
+    /* Dark overlay always covering entire screen */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: -1; /* above bg, below content */
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* so it scrolls naturally */
+      padding: 40px 20px;
+    }
+
+    .card {
+      max-width: 800px;
+      width: 100%;
+      padding: 30px;
+      margin-bottom: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      background: rgba(255,255,255,0.95);
+    }
+
+    h2 {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    /* Radio buttons styling */
+    .form-check-input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #555;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .form-check-input[type="radio"]:checked {
+      border: 4px solid #0d6efd;
+      box-shadow: 0 0 5px rgba(13, 110, 253, 0.7);
+    }
+
+    .form-check-input[type="radio"]:hover {
+      border-color: #0d6efd;
+      box-shadow: 0 0 6px rgba(13, 110, 253, 0.8);
+    }
+
+    .form-check-label {
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>AI Quiz System</h1>
-  <a href="/">Page 1: Create Quiz</a>
-  <hr>
-  {% block content %}{% endblock %}
+  <div class="content-wrapper">
+    <div class="card">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 1 — Paste Text for Quiz</h2>
+<div class="text-center">
+  <h2 class="text-primary">Paste Text for Quiz</h2>
+  <form method="POST" action="/generate" class="mt-3">
+    <div class="mb-3">
+      <label for="material" class="form-label">Material (text):</label>
+      <textarea class="form-control border border-dark" id="material" name="material" rows="6"
+                placeholder="Paste your notes or content here..."></textarea>
+    </div>
 
-<form action="{{ url_for('generate') }}" method="post">
-  <label>Material (text):</label><br>
-  <textarea name="input_text" rows="10" style="width:100%;" placeholder="Paste your notes or content here..."></textarea>
+    <div class="mb-3">
+      <label for="num_questions" class="form-label">Number of Questions:</label><br>
+      <select class="form-select d-inline-block border border-dark text-center" 
+              id="num_questions" name="num_questions" style="width:70px;">
+        <option value="1">1</option>
+        <option value="5" selected>5</option>
+        <option value="10">10</option>
+      </select>
+      <!-- Hidden fallback if nothing selected -->
+      <input type="hidden" name="num_questions" value="1">
+    </div>
 
-  <p style="margin-top:10px;">
-    <label>Number of Questions:</label>
-    <select name="num_questions">
-      <option value="1">1</option>
-      <option value="5" selected>5</option>
-      <option value="10">10</option>
-    </select>
-  </p>
-
-  <button type="submit">Generate Quiz</button>
-</form>
+    <button type="submit" class="btn btn-primary">Generate Quiz</button>
+  </form>
+</div>
 {% endblock %}

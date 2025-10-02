@@ -1,17 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page 2 — Take Quiz</h2>
-<form action="{{ url_for('submit') }}" method="post">
-  {% for q in quiz.questions %}
-    <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
-    {% set q_index = loop.index0 %}
-    {% for choice in q.choices %}
-      <label>
-        <input type="radio" name="q_{{ q_index }}" value="{{ loop.index0 }}" required>
-        {{ choice }}
-      </label><br>
+<div class="quiz-container">
+  <h2 class="text-primary text-center mb-4">Take the Quiz</h2>
+  <form method="POST" action="/submit">
+    {% for q in quiz.questions %}
+      {% set q_index = loop.index0 %}
+      <div class="quiz-question shadow-sm p-4 mb-4 bg-white rounded d-flex">
+        <!-- Number Circle -->
+        <div class="question-number me-3">
+          {{ loop.index }}
+        </div>
+
+        <!-- Question + Choices -->
+        <div class="flex-grow-1">
+          <p class="fw-bold">{{ q.question }}</p>
+          <div class="options ms-3">
+            {% for choice in q.choices %}
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio"
+                     name="q_{{ q_index }}" value="{{ loop.index0 }}" required>
+              <label class="form-check-label">
+                {{ "ABCD"[loop.index0] }}. {{ choice }}
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     {% endfor %}
-  {% endfor %}
-  <button type="submit">Submit</button>
-</form>
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary btn-lg mt-3">Submit Answers</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .quiz-container {
+    max-width: 800px;
+    margin: auto;
+  }
+  .quiz-question {
+    align-items: flex-start;
+  }
+  /* Number circle style */
+  .question-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #007bff;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+</style>
 {% endblock %}
